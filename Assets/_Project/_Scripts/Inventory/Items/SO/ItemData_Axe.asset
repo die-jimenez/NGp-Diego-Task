@@ -15,6 +15,7 @@ MonoBehaviour:
   itemName: Axe
   description: A good old
   type: 0
+  droppedPrefab: {fileID: 5757227638128144461, guid: 5d0a0700306f35742825e048c4323f2d, type: 3}
   stackable: 0
   maxStack: 0
   itemSprite: {fileID: 1067255980, guid: 622428cc305562640bc5dfac6a42688a, type: 3}

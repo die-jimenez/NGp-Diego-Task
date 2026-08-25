@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e157d0456c14f4b4e92ee3179ee63f21, type: 3}
   m_Name: ItemData_Spout
   m_EditorClassIdentifier: Assembly-CSharp::Inventory.Item.ItemData
-  id: 2
   itemName: Spout
   description: A good old Spout
   type: 0
+  droppedPrefab: {fileID: 4725684016104430602, guid: afa9f9acb5fdc0a47bf320b5f31c1770, type: 3}
   stackable: 0
   maxStack: 0
   itemSprite: {fileID: 1886109343, guid: 622428cc305562640bc5dfac6a42688a, type: 3}

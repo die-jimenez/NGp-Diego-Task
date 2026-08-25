@@ -17,6 +17,9 @@ namespace Inventory
         [Title("UI")]
         public List<InventorySlotUI> slotsUI = new();
 
+        [Title("World Drop")]
+        [SerializeField] private GameObject worldItemPrefab;
+
 
         public int draggedSlot { get; set; }
         private List<InventorySlot> _slots = new();
@@ -55,15 +58,34 @@ namespace Inventory
         {
             slotsUI[index].Setup(_slots[index].item, _slots[index].stack, index);
         }
-        
+
         public void SwapSlots(int fromIndex, int toIndex)
         {
             InventorySlot temp = _slots[fromIndex];
             _slots[fromIndex] = _slots[toIndex];
             _slots[toIndex] = temp;
-            
+
             RefreshUISlot(fromIndex);
             RefreshUISlot(toIndex);
+        }
+
+        public void DropItemToWorld(int slotIndex, Vector2 worldPosition)
+        {
+            if (slotIndex < 0 || slotIndex >= _slots.Count) return;
+            
+            InventorySlot slot = _slots[slotIndex];
+            if (slot.item == null) return;
+
+            worldItemPrefab = slot.item.droppedPrefab;
+            if (!worldItemPrefab) return;
+            
+            //Spawn
+            GameObject droppedItem = Instantiate(worldItemPrefab, worldPosition, Quaternion.identity);
+            
+            // Clean Inventory
+            slot.item = null;
+            slot.stack = 0;
+            RefreshUISlot(slotIndex);
         }
     }
 }

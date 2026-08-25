@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e157d0456c14f4b4e92ee3179ee63f21, type: 3}
   m_Name: ItemData_Stone
   m_EditorClassIdentifier: Assembly-CSharp::Inventory.Item.ItemData
-  id: 4
   itemName: Log
   description: It would be useful if there were a building system
   type: 1
+  droppedPrefab: {fileID: 8439427789735431827, guid: fdfe178df7e462b4fbcc29f7dd75dddd, type: 3}
   stackable: 1
   maxStack: 5
   itemSprite: {fileID: 1773091655, guid: 622428cc305562640bc5dfac6a42688a, type: 3}

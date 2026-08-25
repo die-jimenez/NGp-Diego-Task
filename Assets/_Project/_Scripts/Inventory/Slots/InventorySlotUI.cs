@@ -2,26 +2,31 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using Inventory.Item;
-using TMPro; // Tu namespace de ItemData
+using Sirenix.OdinInspector;
+using TMPro;
 
 
 namespace Inventory.Slot
 {
     public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler
     {
-        [Header("Referencias UI")]
+        [Title("UI References")]
         public Image iconImage;
         public RawImage stackContainer;
         public TextMeshProUGUI stackText;
         public CanvasGroup canvasGroup;
 
-        [Header("Datos")]
+        [Title("Slot Data")]
         public int slotIndex;
         public ItemData currentItem;
         public int stackQuantity;
 
+
+        //Privates 
         private Transform _originalIconParent;
         private Vector3 _originalIconLocalPos;
+        private string _blockedTag = "Blocked";
+
 
         public void Setup(ItemData item, int qty, int index)
         {
@@ -41,7 +46,6 @@ namespace Inventory.Slot
                 stackContainer.transform.gameObject.SetActive(false);
             }
         }
-
 
         public void OnBeginDrag(PointerEventData eventData)
         {
@@ -80,10 +84,32 @@ namespace Inventory.Slot
                     InventoryManager.Instance.SwapSlots(this.slotIndex, targetSlot.slotIndex);
                 }
             }
+
+            //Drop
+            TryToDropOnWorld(eventData.position);
         }
 
         public void OnDrop(PointerEventData eventData)
         {
+        }
+
+        private void TryToDropOnWorld(Vector2 screenPosition)
+        {
+            Vector3 worldPos = Camera.main.ScreenToWorldPoint(new Vector3(screenPosition.x, screenPosition.y, 0f));
+            Vector2 worldPos2D = new Vector2(worldPos.x, worldPos.y);
+
+            RaycastHit2D hit = Physics2D.Raycast(worldPos2D, Vector2.zero);
+
+            if (hit.collider != null) {
+                //Drop on blocked tile
+                if (hit.collider.CompareTag(_blockedTag)) {
+                    //TODO: ADD SOUND
+                    return;
+                }
+
+                InventoryManager.Instance.DropItemToWorld(this.slotIndex, worldPos2D);
+            }
+            else Debug.Log("Tile with no collider");
         }
     }
 }

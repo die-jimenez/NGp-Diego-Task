@@ -15,6 +15,7 @@ namespace Inventory.Item
         public string itemName;
         [MultiLineProperty(2)] public string description;
         public ItemType type;
+        public GameObject droppedPrefab;
 
         [Title("Stacks")]
         public bool stackable;
