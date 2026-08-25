@@ -4,10 +4,11 @@ namespace Player
 {
     public interface IPlayerState
     {
-        void HandleInput();
         void Enter();
+        void Exit();
+        void HandleInput();
         void Update();
         void FixedUpdate();
-        void Exit();
+        void LateUpdate();
     }
 }

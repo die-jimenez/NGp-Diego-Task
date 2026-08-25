@@ -1,15 +1,20 @@
+using System;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Player
 {
-    public class PlayerManager : MonoBehaviour
+    public class PlayerStateMachine : MonoBehaviour
     {
-        [Header("StateMachine")]
+        [Title("StateMachine")]
         [SerializeReference] private IPlayerState currentState;
 
-        [Header("Components")]
-        public PlayerMovement movement; 
-        
+        [Title("Components")]
+        public PlayerMovement movement;
+        public PlayerInputHandler input;
+        public PlayerAnimations animations;
+
+
         #region States
 
         [HideInInspector] public IdleState idleState;
@@ -21,11 +26,14 @@ namespace Player
         private void Start()
         {
             //Components
-            movement = !movement ? GetComponent<PlayerMovement>() : movement;
-            
+            if (input == null) input = GetComponent<PlayerInputHandler>();
+            if (movement == null) movement = GetComponent<PlayerMovement>();
+            if (animations == null) animations = GetComponentInChildren<PlayerAnimations>();
+
             //States
-            idleState = new IdleState();
-            walkState = new WalkState(movement);
+            idleState = new IdleState(this);
+            walkState = new WalkState(this);
+            ChangeState(idleState);
         }
 
         private void OnDisable()
@@ -43,6 +51,11 @@ namespace Player
         private void FixedUpdate()
         {
             currentState?.FixedUpdate();
+        }
+
+        private void LateUpdate()
+        {
+            currentState?.LateUpdate();
         }
 
         public void ChangeState(IPlayerState newState)
