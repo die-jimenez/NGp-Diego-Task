@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Audio;
 using DG.Tweening;
 using UnityEngine;
@@ -162,26 +163,35 @@ namespace Inventory.Slot
             //Drop
             TryToDropOnWorld(eventData.position);
         }
-
+        
         private void TryToDropOnWorld(Vector2 screenPosition)
         {
             Vector3 worldPos = Camera.main.ScreenToWorldPoint(new Vector3(screenPosition.x, screenPosition.y, 0f));
             Vector2 worldPos2D = new Vector2(worldPos.x, worldPos.y);
 
-            RaycastHit2D hit = Physics2D.Raycast(worldPos2D, Vector2.zero);
+            ContactFilter2D filter = new ContactFilter2D();
+            filter.useTriggers = true; 
 
-            if (hit.collider != null) {
-                //Drop on blocked tile
-                if (hit.collider.CompareTag(_blockedTag) || hit.collider.CompareTag("Player")) {
+            List<Collider2D> hits = new List<Collider2D>();
+            int hitCount = Physics2D.OverlapPoint(worldPos2D, filter, hits);
+
+            if (hitCount == 0) {
+                Debug.Log("Tile with no collider");
+                return;
+            }
+
+            //Drop on blocked tile
+            foreach (var col in hits) {
+                if (col.CompareTag(_blockedTag) || col.CompareTag("Player")) {
                     SFXManager.Instance.PlaySFX(negativeDropItemOnWorldSound, 0.6f, SFXManager.SoundType.UI, -5);
                     transform.DOShakePosition(0.3f, strength: 20f, vibrato: 100);
                     return;
                 }
-
-                SFXManager.Instance.PlaySFX(postiveDropItemOnWorldSound, 0.8f, SFXManager.SoundType.UI, Random.Range(-4, -2));
-                InventoryManager.Instance.DropItemToWorld(this.slotIndex, worldPos2D);
             }
-            else Debug.Log("Tile with no collider");
+            
+            //Success Drop
+            SFXManager.Instance.PlaySFX(postiveDropItemOnWorldSound, 0.8f, SFXManager.SoundType.UI, Random.Range(-4, -2));
+            InventoryManager.Instance.DropItemToWorld(this.slotIndex, worldPos2D);
         }
 
         #endregion
