@@ -670,3 +670,6 @@ MonoBehaviour:
   slotIndex: 0
   currentItem: {fileID: 11400000, guid: 31b45e6eed3e196439c42cb2333f0fed, type: 2}
   stackQuantity: 0
+  mouseEnterSound: {fileID: 8300000, guid: c230389cdba1a4d47bda71c4d0e2b6f9, type: 3}
+  postiveDropItemOnWorldSound: {fileID: 8300000, guid: e26b12344a8fdd2439361d014323be33, type: 3}
+  negativeDropItemOnWorldSound: {fileID: 8300000, guid: 1340ba1fa579f674ab71453241682a8a, type: 3}

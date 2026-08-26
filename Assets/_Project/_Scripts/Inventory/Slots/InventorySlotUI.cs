@@ -1,3 +1,4 @@
+using Audio;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
@@ -5,11 +6,12 @@ using UnityEngine.EventSystems;
 using Inventory.Item;
 using Sirenix.OdinInspector;
 using TMPro;
+using UnityEngine.VFX;
 
 
 namespace Inventory.Slot
 {
-    public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler,
+    public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler,
         IPointerEnterHandler, IPointerExitHandler
     {
         [Title("UI Main References")]
@@ -17,24 +19,32 @@ namespace Inventory.Slot
         public RawImage stackContainer;
         public TextMeshProUGUI stackText;
         public CanvasGroup slotCanvasGroup;
-        
+
         [Title("UI Main References")]
         public Image hoverContainer;
         public TextMeshProUGUI hoverText;
         public CanvasGroup hoverCanvasGroup;
-        
+
 
         [Title("Slot Data")]
         public int slotIndex;
         public ItemData currentItem;
         public int stackQuantity;
 
+        [Title("Audio")]
+        [SerializeField] private AudioClip mouseEnterSound;
+        [SerializeField] private AudioClip swapItemSound;
+        [SerializeField] private AudioClip postiveDropItemOnWorldSound;
+        [SerializeField] private AudioClip negativeDropItemOnWorldSound;
+
 
         //Privates 
         private Transform _originalIconParent;
         private Vector3 _originalIconLocalPos;
+        [HideInInspector] public static bool IsAnyDragging;
+
         private string _blockedTag = "Blocked";
-        private Tween hoverTween;
+        private Tween _hoverTween;
 
 
         public void Setup(ItemData item, int qty, int index)
@@ -66,10 +76,14 @@ namespace Inventory.Slot
 
         public void OnPointerEnter(PointerEventData eventData)
         {
+            if (!IsAnyDragging) {
+                SFXManager.Instance.PlaySFX(mouseEnterSound, 0.6f, SFXManager.SoundType.UI, slotIndex);
+            }
+
             if (currentItem == null || hoverContainer == null) return;
 
             // Kill previous tween to prevent overlapping animations on rapid mouse movement
-            hoverTween?.Kill();
+            _hoverTween?.Kill();
             hoverContainer.transform.DOKill();
 
             hoverContainer.gameObject.SetActive(true);
@@ -90,10 +104,10 @@ namespace Inventory.Slot
         {
             if (hoverContainer == null) return;
 
-            hoverTween?.Kill();
+            _hoverTween?.Kill();
             hoverContainer.transform.DOKill();
 
-            hoverTween = DOTween.Sequence()
+            _hoverTween = DOTween.Sequence()
                 .Append(hoverCanvasGroup.DOFade(0f, 0.1f))
                 .Join(hoverContainer.transform.DOScale(0.9f, 0.1f))
                 .OnComplete(() => hoverContainer.gameObject.SetActive(false));
@@ -109,6 +123,7 @@ namespace Inventory.Slot
             if (currentItem == null) return;
             _originalIconParent = iconImage.transform.parent;
             _originalIconLocalPos = iconImage.transform.localPosition;
+            IsAnyDragging = true;
 
             //Get out the icon from Layout
             iconImage.transform.SetParent(transform.root);
@@ -125,6 +140,7 @@ namespace Inventory.Slot
         public void OnEndDrag(PointerEventData eventData)
         {
             if (currentItem == null) return;
+            IsAnyDragging = false;
 
             // Return icon to Layout
             iconImage.transform.SetParent(_originalIconParent);
@@ -139,15 +155,12 @@ namespace Inventory.Slot
 
                 if (targetSlot != null && targetSlot != this) {
                     InventoryManager.Instance.SwapSlots(this.slotIndex, targetSlot.slotIndex);
+                    SFXManager.Instance.PlaySFX(swapItemSound, 0.8f, SFXManager.SoundType.UI);
                 }
             }
 
             //Drop
             TryToDropOnWorld(eventData.position);
-        }
-
-        public void OnDrop(PointerEventData eventData)
-        {
         }
 
         private void TryToDropOnWorld(Vector2 screenPosition)
@@ -160,10 +173,12 @@ namespace Inventory.Slot
             if (hit.collider != null) {
                 //Drop on blocked tile
                 if (hit.collider.CompareTag(_blockedTag) || hit.collider.CompareTag("Player")) {
-                    //TODO: ADD SOUND
+                    SFXManager.Instance.PlaySFX(negativeDropItemOnWorldSound, 0.6f, SFXManager.SoundType.UI, -5);
+                    transform.DOShakePosition(0.3f, strength: 20f, vibrato: 100);
                     return;
                 }
 
+                SFXManager.Instance.PlaySFX(postiveDropItemOnWorldSound, 0.8f, SFXManager.SoundType.UI, Random.Range(-4, -2));
                 InventoryManager.Instance.DropItemToWorld(this.slotIndex, worldPos2D);
             }
             else Debug.Log("Tile with no collider");
