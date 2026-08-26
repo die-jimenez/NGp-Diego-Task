@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ItemData_Axe
   m_EditorClassIdentifier: Assembly-CSharp::Inventory.Item.ItemData
   itemName: Axe
-  description: A good old
+  description: A good old Axe
   type: 0
   droppedPrefab: {fileID: 5757227638128144461, guid: 5d0a0700306f35742825e048c4323f2d, type: 3}
   stackable: 0

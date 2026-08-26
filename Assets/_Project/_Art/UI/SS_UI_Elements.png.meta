@@ -4235,7 +4235,7 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: SS_UI_Elements_145
+      name: Dialog
       rect:
         serializedVersion: 2
         x: 455
@@ -7902,6 +7902,7 @@ TextureImporter:
       - key: SpriteEditor.SliceSettings
         value: '{"sliceOnImport":false,"gridCellCount":{"x":1.0,"y":1.0},"gridSpriteSize":{"x":8.0,"y":8.0},"gridSpriteOffset":{"x":0.0,"y":0.0},"gridSpritePadding":{"x":0.0,"y":0.0},"pivot":{"x":0.5,"y":0.5},"pivotPixels":{"x":0.0,"y":0.0},"autoSlicingMethod":0,"spriteAlignment":0,"pivotUnitMode":0,"slicingType":0,"keepEmptyRects":false,"isAlternate":false}'
     nameFileIdTable:
+      Dialog: -1812202659
       SS_UI_Elements_0: -1716993220
       SS_UI_Elements_1: 1286268779
       SS_UI_Elements_10: 1503350589
@@ -7953,7 +7954,6 @@ TextureImporter:
       SS_UI_Elements_142: 1363823348
       SS_UI_Elements_143: 593407703
       SS_UI_Elements_144: 679465391
-      SS_UI_Elements_145: -1812202659
       SS_UI_Elements_146: 967050729
       SS_UI_Elements_147: 121615693
       SS_UI_Elements_148: 798320065

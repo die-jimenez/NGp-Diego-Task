@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ItemData_Stone
   m_EditorClassIdentifier: Assembly-CSharp::Inventory.Item.ItemData
   itemName: Log
-  description: It would be useful if there were a building system
+  description: Just a Rock
   type: 1
   droppedPrefab: {fileID: 8439427789735431827, guid: fdfe178df7e462b4fbcc29f7dd75dddd, type: 3}
   stackable: 1

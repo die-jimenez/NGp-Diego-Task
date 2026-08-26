@@ -1,3 +1,4 @@
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
@@ -8,13 +9,20 @@ using TMPro;
 
 namespace Inventory.Slot
 {
-    public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler
+    public class InventorySlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler,
+        IPointerEnterHandler, IPointerExitHandler
     {
-        [Title("UI References")]
+        [Title("UI Main References")]
         public Image iconImage;
         public RawImage stackContainer;
         public TextMeshProUGUI stackText;
-        public CanvasGroup canvasGroup;
+        public CanvasGroup slotCanvasGroup;
+        
+        [Title("UI Main References")]
+        public Image hoverContainer;
+        public TextMeshProUGUI hoverText;
+        public CanvasGroup hoverCanvasGroup;
+        
 
         [Title("Slot Data")]
         public int slotIndex;
@@ -26,6 +34,7 @@ namespace Inventory.Slot
         private Transform _originalIconParent;
         private Vector3 _originalIconLocalPos;
         private string _blockedTag = "Blocked";
+        private Tween hoverTween;
 
 
         public void Setup(ItemData item, int qty, int index)
@@ -37,6 +46,8 @@ namespace Inventory.Slot
             if (item != null) {
                 iconImage.sprite = item.icon;
                 iconImage.color = Color.white;
+                hoverText.text = item.description;
+
                 if (item.stackable) {
                     stackText.text = stackQuantity.ToString();
                     stackContainer.transform.gameObject.SetActive(true);
@@ -50,6 +61,49 @@ namespace Inventory.Slot
             }
         }
 
+
+        #region Hover enter and exit Events
+
+        public void OnPointerEnter(PointerEventData eventData)
+        {
+            if (currentItem == null || hoverContainer == null) return;
+
+            // Kill previous tween to prevent overlapping animations on rapid mouse movement
+            hoverTween?.Kill();
+            hoverContainer.transform.DOKill();
+
+            hoverContainer.gameObject.SetActive(true);
+            hoverCanvasGroup.alpha = 0f;
+            hoverContainer.transform.localScale = Vector3.one * 0.85f;
+
+            hoverCanvasGroup.DOFade(1f, 0.15f);
+            hoverContainer.transform.DOScale(1f, 0.15f).SetEase(Ease.OutBack);
+
+            // Infinite floating effect 
+            hoverContainer.transform.DOLocalMoveY(2, 1f)
+                .SetRelative()
+                .SetEase(Ease.InOutSine)
+                .SetLoops(-1, LoopType.Yoyo);
+        }
+
+        public void OnPointerExit(PointerEventData eventData)
+        {
+            if (hoverContainer == null) return;
+
+            hoverTween?.Kill();
+            hoverContainer.transform.DOKill();
+
+            hoverTween = DOTween.Sequence()
+                .Append(hoverCanvasGroup.DOFade(0f, 0.1f))
+                .Join(hoverContainer.transform.DOScale(0.9f, 0.1f))
+                .OnComplete(() => hoverContainer.gameObject.SetActive(false));
+        }
+
+        #endregion
+
+
+        #region Drag and Drop Events
+
         public void OnBeginDrag(PointerEventData eventData)
         {
             if (currentItem == null) return;
@@ -59,7 +113,7 @@ namespace Inventory.Slot
             //Get out the icon from Layout
             iconImage.transform.SetParent(transform.root);
             iconImage.raycastTarget = false;
-            canvasGroup.alpha = 0.4f;
+            slotCanvasGroup.alpha = 0.4f;
         }
 
         public void OnDrag(PointerEventData eventData)
@@ -77,7 +131,7 @@ namespace Inventory.Slot
             iconImage.transform.localPosition = _originalIconLocalPos;
 
             iconImage.raycastTarget = true;
-            canvasGroup.alpha = 1f;
+            slotCanvasGroup.alpha = 1f;
 
             // Swap slot
             if (eventData.pointerEnter != null) {
@@ -114,5 +168,7 @@ namespace Inventory.Slot
             }
             else Debug.Log("Tile with no collider");
         }
+
+        #endregion
     }
 }

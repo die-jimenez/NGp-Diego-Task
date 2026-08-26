@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ItemData_Spout
   m_EditorClassIdentifier: Assembly-CSharp::Inventory.Item.ItemData
   itemName: Spout
-  description: A good old Spout
+  description: A good Spout
   type: 0
   droppedPrefab: {fileID: 4725684016104430602, guid: afa9f9acb5fdc0a47bf320b5f31c1770, type: 3}
   stackable: 0
