@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using Audio;
 using Inventory.Item;
 using Inventory.Slot;
 using Inventory.System;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using Random = Unity.Mathematics.Random;
 
 namespace Inventory
 {
@@ -22,6 +24,7 @@ namespace Inventory
 
         [Title("UI")]
         public List<InventorySlotUI> slotsUI = new();
+        [SerializeField] private AudioClip pickupSound;
 
         [Title("World Drop")]
         [SerializeField] private GameObject worldItemPrefab;
@@ -131,7 +134,10 @@ namespace Inventory
                         RefreshUISlot(i);
 
                         // All added
-                        if (amount <= 0) return true;
+                        if (amount <= 0) {
+                            SFXManager.Instance.PlaySFX(pickupSound, 0.8f, SFXManager.SoundType.UI);
+                            return true;
+                        }
                     }
                 }
             }
@@ -143,6 +149,7 @@ namespace Inventory
                 _slots[emptySlotIndex].item = item;
                 _slots[emptySlotIndex].stack = amount;
                 RefreshUISlot(emptySlotIndex);
+                SFXManager.Instance.PlaySFX(pickupSound, 0.8f, SFXManager.SoundType.UI);
                 return true;
             }
 

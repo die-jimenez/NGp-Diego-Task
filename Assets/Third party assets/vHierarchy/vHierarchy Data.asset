@@ -23,6 +23,9 @@ MonoBehaviour:
         - globalObjectIdString: GlobalObjectId_V1-2-6987316e20f195a4bb6a0927ba777707-1904503889-0
         - globalObjectIdString: GlobalObjectId_V1-2-6987316e20f195a4bb6a0927ba777707-1950583234-0
         - globalObjectIdString: GlobalObjectId_V1-2-6987316e20f195a4bb6a0927ba777707-1911550324-0
+        - globalObjectIdString: GlobalObjectId_V1-2-6987316e20f195a4bb6a0927ba777707-1097906908-0
+        - globalObjectIdString: GlobalObjectId_V1-2-6987316e20f195a4bb6a0927ba777707-2046323987-0
+        - globalObjectIdString: GlobalObjectId_V1-2-6987316e20f195a4bb6a0927ba777707-1304723269-0
         values:
         - colorIndex: 0
           iconNameOrGuid: AvatarMask On Icon
@@ -42,6 +45,18 @@ MonoBehaviour:
           isColorRecursive: 0
         - colorIndex: 0
           iconNameOrGuid: Settings Icon
+          isIconRecursive: 0
+          isColorRecursive: 0
+        - colorIndex: 0
+          iconNameOrGuid: LightProbes Icon
+          isIconRecursive: 0
+          isColorRecursive: 0
+        - colorIndex: 0
+          iconNameOrGuid: StandaloneInputModule Icon
+          isIconRecursive: 0
+          isColorRecursive: 0
+        - colorIndex: 0
+          iconNameOrGuid: DirectionalLight Icon
           isIconRecursive: 0
           isColorRecursive: 0
   bookmarks: []
