@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Inventory.Item;
 using Inventory.Slot;
+using Inventory.System;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -15,15 +16,19 @@ namespace Inventory
         public int maxSlots = 7;
         public int selectedSlot = 0;
 
+        [Title("Default Starting Items")]
+        [InfoBox("Items given to the player on the very first game start.", InfoMessageType.Info)]
+        public List<StartingItem> defaultStartingItems = new List<StartingItem>();
+
         [Title("UI")]
         public List<InventorySlotUI> slotsUI = new();
 
         [Title("World Drop")]
         [SerializeField] private GameObject worldItemPrefab;
 
-
-        public int draggedSlot { get; set; }
+        //Privates or Hidden
         private List<InventorySlot> _slots = new();
+        public IReadOnlyList<InventorySlot> GetSlots() => _slots.AsReadOnly();
 
 
         private void Awake()
@@ -35,6 +40,25 @@ namespace Inventory
         private void Start()
         {
             InitializeInventory();
+
+            var hasSaveData = ES3.KeyExists("InventoryData");
+            if (!hasSaveData) {
+                ApplyDefaultItems();
+                SaveSystem.SaveInventory();
+            }
+            else SaveSystem.LoadInventory();
+        }
+        
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.F5)) SaveSystem.SaveInventory();
+            if (Input.GetKeyDown(KeyCode.F6)) SaveSystem.LoadInventory();
+            
+        }
+
+        private void OnApplicationQuit()
+        {
+            SaveSystem.SaveInventory();
         }
 
         private void InitializeInventory()
@@ -42,7 +66,7 @@ namespace Inventory
             for (int i = _slots.Count; i < slotsUI.Count; i++) {
                 //TODO: Here is where I get the data to slots
                 _slots.Add(new InventorySlot());
-                _slots[i].item = slotsUI[i].currentItem;
+                //_slots[i].item = slotsUI[i].currentItem;
             }
 
             RefreshAllUI();
@@ -125,7 +149,23 @@ namespace Inventory
             Debug.LogWarning("Inventory Full");
             return false;
         }
+        
+        public bool AddItem(ItemData item, int amount, int slotIndex)
+        {
+            if (item == null || amount <= 0) return false;
+            if (slotIndex < 0 || slotIndex >= _slots.Count) return false;
 
+            if (_slots[slotIndex].item != null) {
+                Debug.LogWarning($"[InventoryManager] Slot {slotIndex} already occupied, cannot place item there.");
+                return false;
+            }
+
+            _slots[slotIndex].item = item;
+            _slots[slotIndex].stack = amount;
+            RefreshUISlot(slotIndex);
+            return true;
+        }
+        
         private int FindEmptySlotIndex()
         {
             for (int i = 0; i < _slots.Count; i++) {
@@ -135,6 +175,42 @@ namespace Inventory
             }
 
             return -1; //Inventory full
+        }
+
+        #endregion
+
+
+        #region API for SaveSystem
+
+        public void ClearInventory()
+        {
+            for (int i = 0; i < _slots.Count; i++) {
+                _slots[i].item = null;
+                _slots[i].stack = 0;
+            }
+
+            RefreshAllUI();
+        }
+
+        private void ApplyDefaultItems()
+        {
+            ClearInventory();
+
+            foreach (var startingItem in defaultStartingItems)
+            {
+                if (startingItem.item == null) continue;
+                AddItem(startingItem.item, startingItem.quantity > 0 ? startingItem.quantity : 1, startingItem.slotIndex);
+            }
+
+            RefreshAllUI();
+        }
+        
+        public void SetSlot(int index, ItemData item, int amount)
+        {
+            if (index < 0 || index >= _slots.Count) return;
+
+            _slots[index].item = item;
+            _slots[index].stack = amount;
         }
 
         #endregion
