@@ -663,7 +663,7 @@ MonoBehaviour:
   iconImage: {fileID: 8671553801616156886}
   stackContainer: {fileID: 6121119914037271877}
   stackText: {fileID: 306332800376031642}
-  slotCanvasGroup: {fileID: 0}
+  slotCanvasGroup: {fileID: 9053065622991265115}
   hoverContainer: {fileID: 1730834521882875633}
   hoverText: {fileID: 4665792812870038621}
   hoverCanvasGroup: {fileID: 1201053246631385352}
