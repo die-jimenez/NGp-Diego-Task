@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Inventory.Item;
 using Inventory.Slot;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -59,6 +60,9 @@ namespace Inventory
             slotsUI[index].Setup(_slots[index].item, _slots[index].stack, index);
         }
 
+
+        #region Item Behaviors
+
         public void SwapSlots(int fromIndex, int toIndex)
         {
             InventorySlot temp = _slots[fromIndex];
@@ -72,20 +76,67 @@ namespace Inventory
         public void DropItemToWorld(int slotIndex, Vector2 worldPosition)
         {
             if (slotIndex < 0 || slotIndex >= _slots.Count) return;
-            
+
             InventorySlot slot = _slots[slotIndex];
             if (slot.item == null) return;
 
             worldItemPrefab = slot.item.droppedPrefab;
             if (!worldItemPrefab) return;
-            
+
             //Spawn
             GameObject droppedItem = Instantiate(worldItemPrefab, worldPosition, Quaternion.identity);
-            
+
             // Clean Inventory
             slot.item = null;
             slot.stack = 0;
             RefreshUISlot(slotIndex);
         }
+
+        public bool AddItem(ItemData item, int amount)
+        {
+            if (item == null || amount <= 0) return false;
+
+            if (item.stackable) {
+                for (int i = 0; i < _slots.Count; i++) {
+                    if (_slots[i].item == item && _slots[i].stack < item.maxStack) {
+                        int spaceLeft = item.maxStack - _slots[i].stack;
+                        int amountToAdd = Mathf.Min(amount, spaceLeft);
+
+                        _slots[i].stack += amountToAdd;
+                        amount -= amountToAdd;
+                        RefreshUISlot(i);
+
+                        // All added
+                        if (amount <= 0) return true;
+                    }
+                }
+            }
+
+            //If there is a remaining quantity (or the item isn't stackable), find an empty slot.
+            int emptySlotIndex = FindEmptySlotIndex();
+            bool hasSpaceInInventory = emptySlotIndex != -1;
+            if (hasSpaceInInventory) {
+                _slots[emptySlotIndex].item = item;
+                _slots[emptySlotIndex].stack = amount;
+                RefreshUISlot(emptySlotIndex);
+                return true;
+            }
+
+            Debug.LogWarning("Inventory Full");
+            return false;
+        }
+
+        private int FindEmptySlotIndex()
+        {
+            for (int i = 0; i < _slots.Count; i++) {
+                if (_slots[i].item == null) {
+                    return i;
+                }
+            }
+
+            return -1; //Inventory full
+        }
+
+        #endregion
     }
 }

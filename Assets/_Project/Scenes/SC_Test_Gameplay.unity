@@ -4082,7 +4082,7 @@ TilemapCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
@@ -9721,11 +9721,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1635927055330882327, guid: afa9f9acb5fdc0a47bf320b5f31c1770, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.89
+      value: 1.2
       objectReference: {fileID: 0}
     - target: {fileID: 1635927055330882327, guid: afa9f9acb5fdc0a47bf320b5f31c1770, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.212
+      value: 2.12
       objectReference: {fileID: 0}
     - target: {fileID: 1635927055330882327, guid: afa9f9acb5fdc0a47bf320b5f31c1770, type: 3}
       propertyPath: m_LocalPosition.z
@@ -9896,6 +9896,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6132937019422874095, guid: 9a91d9a5542658347bab82a368f2db21, type: 3}
       propertyPath: m_Name
+      value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 6132937019422874095, guid: 9a91d9a5542658347bab82a368f2db21, type: 3}
+      propertyPath: m_TagString
       value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 6500546609356121702, guid: 9a91d9a5542658347bab82a368f2db21, type: 3}

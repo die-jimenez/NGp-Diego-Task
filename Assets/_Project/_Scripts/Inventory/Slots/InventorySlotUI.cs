@@ -37,8 +37,11 @@ namespace Inventory.Slot
             if (item != null) {
                 iconImage.sprite = item.icon;
                 iconImage.color = Color.white;
-                if (item.stackable) stackText.text = stackQuantity.ToString();
-                stackContainer.transform.gameObject.SetActive(true);
+                if (item.stackable) {
+                    stackText.text = stackQuantity.ToString();
+                    stackContainer.transform.gameObject.SetActive(true);
+                }
+                else stackContainer.transform.gameObject.SetActive(false);
             }
             else {
                 iconImage.sprite = null;
@@ -102,7 +105,7 @@ namespace Inventory.Slot
 
             if (hit.collider != null) {
                 //Drop on blocked tile
-                if (hit.collider.CompareTag(_blockedTag)) {
+                if (hit.collider.CompareTag(_blockedTag) || hit.collider.CompareTag("Player")) {
                     //TODO: ADD SOUND
                     return;
                 }
