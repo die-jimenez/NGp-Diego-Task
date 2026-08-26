@@ -11,10 +11,27 @@ namespace Inventory.Item
         public ItemData itemData;
         public int quantity = 1;
 
+        [Title("VFX & SFX")]
+        [SerializeField] private bool playAnimationOnStart = true;
+
         private bool _isFollwignPlayer;
         private Transform _playerTransform;
         private float _pickupSpeed = 5;
 
+        private Vector3 _originalScale;
+
+
+        private void Awake()
+        {
+            _originalScale = transform.localScale;
+        }
+
+        private void Start()
+        {
+            if (playAnimationOnStart) {
+                PlaySpawnAnimation();
+            }
+        }
 
         private void Update()
         {
@@ -46,5 +63,19 @@ namespace Inventory.Item
         }
 
         #endregion
+
+
+        public void PlaySpawnAnimation()
+        {
+            transform.localScale = Vector3.zero;
+
+            Vector3 startPos = transform.position;
+            Vector3 popPos = startPos + Vector3.up * 0.3f;
+
+            Sequence spawnSequence = DOTween.Sequence();
+            spawnSequence.Append(transform.DOScale(_originalScale, 0.35f).SetEase(Ease.OutBack));
+            spawnSequence.Join(transform.DOMove(popPos, 0.2f).SetEase(Ease.OutQuad));
+            spawnSequence.Append(transform.DOMove(startPos, 0.15f).SetEase(Ease.InQuad));
+        }
     }
 }
